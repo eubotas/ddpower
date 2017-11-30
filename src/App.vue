@@ -1,13 +1,19 @@
 <template>
   <div id="app">
     <img src="./assets/logo.png">
-    <router-view/>
+    <router-view />
+    <Narbar />
   </div>
 </template>
 
 <script>
+import Narbar from './components/Narbar.vue'
+
 export default {
-  name: 'app'
+  name: 'app',
+  components: {
+    Narbar,
+  }
 }
 </script>
 
