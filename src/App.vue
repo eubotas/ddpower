@@ -1,6 +1,5 @@
 <template>
   <div id="app">
-    <img src="./assets/logo.png">
     <router-view />
     <Narbar />
   </div>
@@ -17,7 +16,9 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss" scope>
+//全局样式
+@import './assets/css/common';
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
