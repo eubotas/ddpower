@@ -4,6 +4,7 @@ import Router from 'vue-router'
 //my page
 import Index from '@/pages/Index'
 import My from '@/pages/My'
+import Login from '@/pages/others/Login'
 
 Vue.use(Router)
 
@@ -18,6 +19,11 @@ export default new Router({
       path: '/my',
       name: 'My',
       component: My
+    },
+    {
+      path: '/login',
+      name: 'Login',
+      component: Login
     }
   ]
 })
