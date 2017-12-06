@@ -13,13 +13,15 @@
       <cell title="个人信息" value="" is-link></cell>
       <cell title="意见反馈" value="" is-link></cell>
       <cell title="客服电话" value="" is-link></cell>
-      <cell title="点我注销" value="" is-link></cell>
+      <cell title="点我注销" value="" link="/login"></cell>
     </group>
+    <Narbar />
   </div>
 </template>
 
 <script>
 import Headbar from '@/components/Headbar.vue'
+import Narbar from '@/components/Narbar.vue'
 import { Group, Cell } from 'vux'
 
 export default {
@@ -28,6 +30,7 @@ export default {
     Headbar,
     Group,
     Cell,
+    Narbar,
   }
 }
 </script>

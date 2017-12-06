@@ -11,3 +11,7 @@ img.max{
 body{
   background-color: #fafafa;
 }
+$defaultColor: #0572c4;
+body .vux-header{
+  background-color: $defaultColor;
+}

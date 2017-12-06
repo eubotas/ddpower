@@ -11,12 +11,6 @@ export default {
   props: [
       'headName'
   ],
-  name: '',
-  data () {
-    return {
-
-    }
-  },
   methods: {
   // 事件响应方法
 

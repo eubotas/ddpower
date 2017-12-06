@@ -1,17 +1,16 @@
 <template>
   <div id="app">
     <router-view />
-    <Narbar />
   </div>
 </template>
 
 <script>
-import Narbar from './components/Narbar.vue'
+
 
 export default {
   name: 'app',
   components: {
-    Narbar,
+    
   }
 }
 </script>
