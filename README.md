@@ -9,7 +9,7 @@
 - sass
 
 ## preview
-![image](https://raw.githubusercontent.com/lengziyu/ddprower/master/mobile.png)
+![image](https://raw.githubusercontent.com/lengziyu/ddpower/master/mobile.png)
 
 ## Build Setup
 
