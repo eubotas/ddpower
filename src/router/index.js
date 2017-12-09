@@ -9,6 +9,11 @@ import Register from '@/pages/others/Register'
 import Testing from '@/pages/Testing'
 import Charts from '@/pages/Charts'
 
+
+//我的
+import Userinfo from '@/pages/my/Userinfo'
+import Feedback from '@/pages/my/Feedback'
+
 Vue.use(Router)
 
 export default new Router({
@@ -42,6 +47,16 @@ export default new Router({
       path: '/charts',
       name: 'Charts',
       component: Charts
-    }
+    },
+    {
+      path: '/userinfo',
+      name: 'Userinfo',
+      component: Userinfo
+    },
+    {
+      path: '/feedback',
+      name: 'Feedback',
+      component: Feedback
+    },
   ]
 })

@@ -45,5 +45,10 @@ components: {
 }
 </script>
 <style scoped>
-
+  .narbar{
+    position: fixed;
+    left: 0;
+    width: 100%;
+    bottom: 0;
+  }
 </style>
