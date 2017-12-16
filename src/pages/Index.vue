@@ -4,7 +4,7 @@
     <Banner></Banner>
     <div class="line"></div>
     <About></About>
-    <Narbar />
+
   </div>
 </template>
 
@@ -12,13 +12,11 @@
 import Headbar from '@/components/Headbar.vue'
 import Banner from '@/pages/Index/Banner.vue'
 import About from '@/pages/Index/About.vue'
-import Narbar from '@/components/Narbar.vue'
 export default {
   name: 'Index',
   components: {
     Headbar,
     Banner,
-    Narbar,
     About
   }
 }

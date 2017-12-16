@@ -6,39 +6,82 @@
         <img class="max" src="../assets/img/my/avator.png">
       </div>
       <div class="user-name">
-        LJY
+        {{data.data.name}}
       </div>
     </div>
     <group label-width="5.5em" label-margin-right="2em" label-align="justify">
       <cell title="个人信息" value="" link="/userinfo">
         <img slot="icon" width="20" style="display:block;margin-right:8px;" src="../assets/img/icon/1.png"/>
       </cell>
-      <cell title="意见反馈" value="" link="/feedback">
+      <cell title="意见反馈" link="/feedback">
         <img slot="icon" width="20" style="display:block;margin-right:8px;" src="../assets/img/icon/2.png"/>
       </cell>
-      <a class="callus" href="tel:4008001234"><cell title="客服电话" value="" is-link>
+      <a class="callus" href="tel:4008001234"><cell title="客服电话" is-link>
         <img slot="icon" width="20" style="display:block;margin-right:8px;" src="../assets/img/icon/3.png"/>
       </cell></a>
-      <cell title="点我注销" value="" link="/login">
+      <cell title="点我注销" @click.native="showPlugin">
         <img slot="icon" width="20" style="display:block;margin-right:8px;" src="../assets/img/icon/4.png"/>
       </cell>
     </group>
-    <Narbar />
   </div>
 </template>
 
 <script>
+import Vue from 'vue';
 import Headbar from '@/components/Headbar.vue'
-import Narbar from '@/components/Narbar.vue'
-import { Group, Cell } from 'vux'
+import { Group, Cell,Confirm, TransferDomDirective as TransferDom, ConfirmPlugin  } from 'vux'
 
+Vue.use(ConfirmPlugin)
+import * as _ from '@/util/common'
+import VModal from 'vue-js-modal'
+Vue.use(VModal)
 export default {
+  directives: {
+    TransferDom
+  },
   name: 'my',
   components: {
     Headbar,
     Group,
     Cell,
-    Narbar,
+    Confirm,
+    ConfirmPlugin
+  },
+  data(){
+    return {
+    show: false,
+    data: _.getlocalStorage('userInfo')
+    }
+  },
+
+
+  methods: {
+    // 是否要注销
+    // goLogin: function(){
+    //
+    //   window.location.href = '/#/login'
+    // },
+    onCancel () {
+      console.log('取消')
+    },
+    onConfirm (msg) {
+      console.log('确定')
+    },
+    showPlugin () {
+  this.$vux.confirm.show({
+    title: '提示',
+    content: '确定注销吗？',
+    onCancel () {
+      console.log('plugin cancel')
+    },
+    onConfirm () {
+      console.log('plugin confirm');
+      setTimeout(function(){
+        window.location.href = '/#/login'
+      }, 400)
+    }
+  })
+},
   }
 }
 </script>

@@ -1,11 +1,12 @@
 <template>
   <div class="narbar">
-    <tabbar>
-    <tabbar-item selected  link="/">
+    <tabbar  v-show="menuDisplay">
+    <tabbar-item selected link="/">
       <img slot="icon" src="../assets/img/navbar/tab_1_uncheck.png">
       <span slot="label">首页</span>
     </tabbar-item>
     <tabbar-item link="/testing">
+      <span class="icon"></span>
       <img slot="icon" src="../assets/img/navbar/tab_2_uncheck.png">
       <span slot="label">在线检测</span>
     </tabbar-item>
@@ -29,9 +30,13 @@
 import { Tabbar, TabbarItem } from 'vux'
 
 export default {
+  props: {
+    menuDisplay: Boolean
+  },
   name: 'narbar',
   data () {
     return {
+
     }
   },
   methods: {

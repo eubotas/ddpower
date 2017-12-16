@@ -14,13 +14,13 @@
 
       <group>
         <ul class="voit">
-          <li v-for="i in 9">
+          <li v-for="i in data.data.tags">
             <div class="voit-head">
               <i><img class="max" src="../assets/img/params/IA.png"></i>
-              <span>S</span>
+              <span>{{ i.name }}</span>
             </div>
             <div class="voit-info">
-              4.79 kVar
+              {{ i.value }} kVar
             </div>
           </li>
         </ul>
@@ -36,38 +36,90 @@
         </li>
       </ul>
     </div>
-    <Narbar />
+
   </div>
 </template>
-
 <script>
 import Headbar from '@/components/Headbar.vue'
-import Narbar from '@/components/Narbar.vue'
-import { Group, Cell, Tab, TabItem, Actionsheet, XSwitch } from 'vux'
+import { Group, Cell, Tab, TabItem, Actionsheet, XSwitch, Toast, ToastPlugin } from 'vux'
+
+import Vue from 'vue';
+import axios from 'axios'
+import Config from '@/config.js'
+import qs from 'qs';
+
+import * as _ from '@/util/common'
+
+Vue.use(ToastPlugin)
 export default {
   name: 'my',
   components: {
     Headbar,
-    Narbar,
     Tab,
     TabItem,
     Actionsheet,
     XSwitch,
     Group,
+    Toast, ToastPlugin
   },
   data(){
     return {
       activeIndex: 0,
       show2: false,
+      data: this.data,
+      thisItem: '221',
       menus2: {
         menu1: '221',
         menu2: '211',
         menu3: '401',
         menu4: '402',
-        menu5: '343',
-        menu6: '674',
       },
     }
+  },
+  created() {
+    var userInfo = _.getlocalStorage('userInfo');
+    var siteInfo = _.getlocalStorage('getSiteInfo');
+
+    // console.log(siteInfo.data.sites[0].siteId)
+    // 获取站点编号和token
+    var tfParams = {
+          cmd: 'getTFList',
+          token: userInfo.data.token,
+          tfid: siteInfo.data.sites[0].siteId,
+    }
+    axios.post(Config.URL.Test, qs.stringify(tfParams))
+      .then((res)=> {
+        console.log(res);
+        console.log('8888888888')
+        // if(res.data.errMsg == 'OK'){
+        //   console.log(res)
+        //   console.log('9999999999999')
+        // }
+      })
+      .catch((error) =>{
+        console.log(error);
+        console.log('33333333')
+      });
+
+
+
+    var params = {
+          cmd: 'getTFData',
+          token: userInfo.data.token,
+          tfid: "Beijing/ChaoYang/LJY/遥测/"+this.thisItem,
+    }
+    axios.post(Config.URL.Test, qs.stringify(params))
+      .then((res)=> {
+        console.log(res);
+        if(res.data.errMsg == 'OK'){
+          this.data = res
+        }else{
+          this.$vux.toast.text(res.data.errMsg);
+        }
+      })
+      .catch((error) =>{
+        console.log(error);
+      });
   },
   methods: {
     onItemClick (index) {
@@ -77,8 +129,27 @@ export default {
     console (msg) {
       console.log(msg)
     },
-    click (key) {
-      console.log(key)
+    click (key, item) {
+      console.log(item)
+      var userInfo = _.getlocalStorage('userInfo');
+
+      var params = {
+            cmd: 'getTFData',
+            token: userInfo.data.token,
+            tfid: "Beijing/ChaoYang/LJY/遥测/"+item,
+      }
+      axios.post(Config.URL.Test, qs.stringify(params))
+        .then((res)=> {
+          console.log(res);
+          if(res.data.errMsg == 'OK'){
+            this.data = res
+          }else{
+            this.$vux.toast.text(res.data.errMsg);
+          }
+        })
+        .catch((error) =>{
+          console.log(error);
+        });
     }
   },
 

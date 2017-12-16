@@ -4,8 +4,8 @@
       <img class="max" src="../../assets/img/others/launcher.png">
     </div>
     <group>
-      <x-input title="账号"></x-input>
-      <x-input title="密码"></x-input>
+      <x-input title="账号" v-model="user"></x-input>
+      <x-input title="密码" v-model="password"></x-input>
     </group>
     <div class="agreepwd">
       <label for="weuiAgree" class="weui-agree">
@@ -16,7 +16,7 @@
       </label>
     </div>
     <div style="padding:15px">
-      <x-button link="/" type="primary">登录</x-button>
+      <x-button type="primary"  @click.native="submit()">登录</x-button>
       <x-button link="/register">用户体验</x-button>
     </div>
     <div class="copyright">
@@ -27,20 +27,79 @@
 </template>
 
 <script>
-import { XInput, Group, XButton } from 'vux'
+
+import { XHeader, XButton, XInput, Group, Toast, ToastPlugin} from 'vux'
+import Vue from 'vue';
+import axios from 'axios'
+import Config from '@/config.js'
+import qs from 'qs';
+
+import * as _ from '@/util/common'
+
+Vue.use(ToastPlugin)
+Vue.prototype.$http = axios
 
 export default {
   name: 'login',
   components: {
+    XHeader,
+    XButton,
     XInput,
     Group,
-    XButton
+    Toast,
+    ToastPlugin,
+  },
+  data(){
+    return {
+      user: '',
+      password: '',
+    }
+  },
+  mounted:function(){
+
+  },
+  methods: {
+    // 提交
+    submit: function(){
+      if(!this.user){
+        this.$vux.toast.text('请输入账号', 'middle');
+      }else if(!this.password){
+        this.$vux.toast.text('请输入密码', 'middle');
+      }else{
+        var params = {
+          cmd: 'login',
+          user: this.user,
+          password: this.password
+        }
+        axios.post(Config.URL.Test, qs.stringify(params))
+          .then((response)=> {
+            console.log(response);
+            if(response.data.errMsg == 'OK'){
+              this.$vux.toast.text('登录成功！', 'middle');
+              //保存用户信息
+              _.setlocalStorage('userInfo', response)
+              setTimeout(function(){
+                window.location.href = '/#/'
+              }, 400)
+            }else{
+              this.$vux.toast.text(response.data.errMsg);
+            }
+          })
+          .catch((error) =>{
+            console.log(error);
+          });
+      }
+    }
   }
+
 }
 </script>
 
 
 <style lang="scss" scoped>
+  body .narbar{
+    display: none;
+  }
   .logo{
     padding: 3rem 0;
     width: 40%;

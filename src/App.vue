@@ -1,16 +1,25 @@
 <template>
   <div id="app">
     <router-view />
+    <Narbar :menu-display="menuDisplay" />
   </div>
 </template>
 
 <script>
-
+import Narbar from '@/components/Narbar.vue'
 
 export default {
   name: 'app',
   components: {
-    
+    Narbar
+  },
+  computed: {
+    menuDisplay () {
+      if (this.$route.path.split('/')[1] == 'login' || this.$route.path.split('/')[1] == 'register') {
+        return false
+      }
+      return this.$route.path.split('/').length > 2 ? false : true
+    },
   }
 }
 </script>

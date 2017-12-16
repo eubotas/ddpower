@@ -26,13 +26,11 @@
 
     </div>
 
-    <Narbar />
   </div>
 </template>
 
 <script>
 import Headbar from '@/components/Headbar.vue'
-import Narbar from '@/components/Narbar.vue'
 import LineChart from './charts/LineChart.js'
 
 import { Group, Cell, Tab, TabItem } from 'vux'
@@ -79,7 +77,6 @@ export default {
   },
   components: {
     Headbar,
-    Narbar,
     Tab,
     TabItem,
     ButtonTab,
