@@ -6,13 +6,14 @@
       <tab-item @on-item-click="onItemClick">开关状态</tab-item>
     </tab>
     <div v-show="activeIndex === 0">
+
       <group>
-        <x-switch :title="'选择开关'" v-model="show2"></x-switch>
+        <popup-radio title="选择变压器" :options="options1" @on-change="onChange" v-model="thisItem"></popup-radio>
       </group>
 
-      <actionsheet v-model="show2" :menus="menus2" @on-click-menu="click" show-cancel></actionsheet>
 
       <group>
+
         <ul class="voit">
           <li v-for="i in data.data.tags">
             <div class="voit-head">
@@ -28,10 +29,10 @@
     </div>
     <div v-show="activeIndex === 1">
       <ul class="state">
-        <li v-for="i in 9">
+        <li v-for="a in switches">
           <div class="state-main">
-            <span class="state-name">32开关</span>
-            <span class="state-value">开</span>
+            <span class="state-name">{{a.name}}</span>
+            <span class="state-value"><span :class="[a.value ? 'open':'close']"></span></span>
           </div>
         </li>
       </ul>
@@ -41,7 +42,7 @@
 </template>
 <script>
 import Headbar from '@/components/Headbar.vue'
-import { Group, Cell, Tab, TabItem, Actionsheet, XSwitch, Toast, ToastPlugin } from 'vux'
+import { Group, Cell, Tab, TabItem, PopupRadio, Toast, ToastPlugin } from 'vux'
 
 import Vue from 'vue';
 import axios from 'axios'
@@ -57,8 +58,7 @@ export default {
     Headbar,
     Tab,
     TabItem,
-    Actionsheet,
-    XSwitch,
+    PopupRadio,
     Group,
     Toast, ToastPlugin
   },
@@ -67,59 +67,67 @@ export default {
       activeIndex: 0,
       show2: false,
       data: this.data,
+      switches: this.switches,
       thisItem: '221',
-      menus2: {
-        menu1: '221',
-        menu2: '211',
-        menu3: '401',
-        menu4: '402',
-      },
+      SiteActive: 0,
+      options1: [],
+      TFList: null,
+      tfids: null,
     }
   },
   created() {
     var userInfo = _.getlocalStorage('userInfo');
     var siteInfo = _.getlocalStorage('getSiteInfo');
+    var SiteSwitch = _.getlocalStorage('SiteSwitch');
+    var getTfids = _.getlocalStorage('getTfids');
+    SiteSwitch?this.SiteActive = SiteSwitch:this.SiteActive = 0;
 
-    // console.log(siteInfo.data.sites[0].siteId)
-    // 获取站点编号和token
-    var tfParams = {
-          cmd: 'getTFList',
-          token: userInfo.data.token,
-          tfid: siteInfo.data.sites[0].siteId,
+    var siteId = siteInfo.data.sites[this.SiteActive].siteId;
+
+    var opt = [];
+    for (var i = 0; i < getTfids.data.TFList.length; i++) {
+      opt.push(getTfids.data.TFList[i].name)
     }
-    axios.post(Config.URL.Test, qs.stringify(tfParams))
-      .then((res)=> {
-        console.log(res);
-        console.log('8888888888')
-        // if(res.data.errMsg == 'OK'){
-        //   console.log(res)
-        //   console.log('9999999999999')
-        // }
-      })
-      .catch((error) =>{
-        console.log(error);
-        console.log('33333333')
-      });
+    this.TFList = getTfids.data.TFList;
+    this.options1 = opt;
 
 
-
+    for (var i = 0; i < this.TFList.length; i++) {
+      var item = this.TFList[i];
+      if(item.name == this.thisItem){
+        this.tfids = item.tfid
+      }
+    }
     var params = {
           cmd: 'getTFData',
           token: userInfo.data.token,
-          tfid: "Beijing/ChaoYang/LJY/遥测/"+this.thisItem,
+          tfid: this.tfids,
     }
     axios.post(Config.URL.Test, qs.stringify(params))
       .then((res)=> {
-        console.log(res);
         if(res.data.errMsg == 'OK'){
           this.data = res
-        }else{
-          this.$vux.toast.text(res.data.errMsg);
         }
       })
-      .catch((error) =>{
-        console.log(error);
-      });
+
+      //获取开关
+      var params = {
+            cmd: 'getSwitches',
+            token: userInfo.data.token,
+            siteId: siteId,
+      }
+
+      axios.post(Config.URL.Test, qs.stringify(params))
+        .then((resa)=> {
+          if(resa.data.errMsg == 'OK'){
+            this.switches = resa.data.switches.sort(_.sortBy('name', false, parseInt));
+          }else{
+            this.$vux.toast.text(resa.data.errMsg);
+          }
+        })
+        .catch((error) =>{
+          console.log(error);
+        });
   },
   methods: {
     onItemClick (index) {
@@ -129,20 +137,29 @@ export default {
     console (msg) {
       console.log(msg)
     },
-    click (key, item) {
-      console.log(item)
-      var userInfo = _.getlocalStorage('userInfo');
+    onChange (key, item) {
 
+      var userInfo = _.getlocalStorage('userInfo');
+      this.thisItem = key;
+
+      for (var i = 0; i < this.TFList.length; i++) {
+        var item = this.TFList[i];
+        if(item.name == key){
+          this.tfids = item.tfid
+        }
+      }
       var params = {
             cmd: 'getTFData',
             token: userInfo.data.token,
-            tfid: "Beijing/ChaoYang/LJY/遥测/"+item,
+            tfid: this.tfids,
       }
+      console.log(params)
       axios.post(Config.URL.Test, qs.stringify(params))
         .then((res)=> {
-          console.log(res);
+
           if(res.data.errMsg == 'OK'){
-            this.data = res
+            this.data = res;
+            console.log(res)
           }else{
             this.$vux.toast.text(res.data.errMsg);
           }
@@ -158,6 +175,7 @@ export default {
 
 
 <style lang="scss" scoped>
+
   .vux-tab .vux-tab-item.vux-tab-selected{
     color: #0572c4;
     border-bottom: 3px solid #0572c4;
@@ -165,6 +183,7 @@ export default {
   .vux-tab-ink-bar{
     background-color: #0572c4;
   }
+
   .voit{
     padding: 6%;
     overflow: hidden;
@@ -191,13 +210,14 @@ export default {
         span{
           color: #fff;
           font-weight: 600;
-          font-size: 1.2rem;
+          font-size: 1rem;
         }
       }
       .voit-info{
         padding: 10px 0;
         color: #0572c4;
-        font-size: 1.4rem;
+        text-align: center;
+        font-size: 1.2rem;
       }
     }
     li:nth-child(odd){
@@ -212,18 +232,51 @@ export default {
     li{
       width: 31.3333%;
       margin: 1%;
-      background-color: #ddd;
+      background-color: #f2f2f2;
+      line-height: 32px;
+      overflow: hidden;
       float: left;
       .state-main{
         padding: 10px;
         overflow: hidden;
         .state-name{
           float: left;
+          font-size: .9rem;
         }
         .state-value{
           float: right;
+          margin-top: -2px;
+          span{
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            vertical-align: middle;
+          }
+          .open{
+            background: url('../assets/img/params/switchoff.png') no-repeat;
+            background-size: 100%;
+          }
+          .close{
+            background: url('../assets/img/params/switchon.png') no-repeat;
+            background-size: 100%;
+          }
         }
       }
+    }
+  }
+  .itemGroup{
+    position: relative;
+  }
+  .showThisItem{
+    position: absolute;
+    left: 50%;
+    top: 0;
+    line-height: 45px;
+  }
+  @media screen and (max-width: 340px){
+    .state li .state-main .state-value span{
+      width: 24px;
+      height: 24px;
     }
   }
 </style>

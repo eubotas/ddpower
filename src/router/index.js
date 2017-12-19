@@ -8,11 +8,15 @@ import Login from '@/pages/others/Login'
 import Register from '@/pages/others/Register'
 import Testing from '@/pages/Testing'
 import Charts from '@/pages/Charts'
-
+import Police from '@/pages/Police'
 
 //我的
 import Userinfo from '@/pages/my/Userinfo'
 import Feedback from '@/pages/my/Feedback'
+import SiteSwitch from '@/pages/my/SiteSwitch'
+
+//图表
+import Chart1 from '@/pages/charts/LineChart'
 
 Vue.use(Router)
 
@@ -46,7 +50,13 @@ export default new Router({
     {
       path: '/charts',
       name: 'Charts',
-      component: Charts
+      component: Charts,
+      // children: [
+      //     {
+      //       path: 'chart1',
+      //       component: Chart1
+      //     },
+      // ]
     },
     {
       path: '/userinfo',
@@ -57,6 +67,16 @@ export default new Router({
       path: '/feedback',
       name: 'Feedback',
       component: Feedback
+    },
+    {
+      path: '/police',
+      name: 'Police',
+      component: Police
+    },
+    {
+      path: '/siteswitch',
+      name: 'SiteSwitch',
+      component: SiteSwitch
     },
   ]
 })

@@ -1,29 +1,29 @@
 <template>
   <div class="about">
     <h3>站点概况</h3>
-    <p>配电室代维开始时间：{{data.data.sites[0].buildYear}}</p>
-    <p>站点名称：{{data.data.sites[0].name}}</p>
+    <p>配电室代维开始时间：{{data.data.sites[activeIndex].buildYear}}</p>
+    <p>站点名称：{{data.data.sites[activeIndex].name}}</p>
     <p>
     <span class="p-grid">
       <span class="p-griditem">
-        高压柜数量：{{data.data.sites[0].highVoltCab}}
+        高压柜数量：{{data.data.sites[activeIndex].highVoltCab}}
       </span>
       <span class="p-griditem">
-        低压柜数量：{{data.data.sites[0].lowVoltCab}}
+        低压柜数量：{{data.data.sites[activeIndex].lowVoltCab}}
       </span>
     </span>
     </p>
     <p>
     <span class="p-grid">
       <span class="p-griditem">
-        变压器数量：{{data.data.sites[0].transformers}}
+        变压器数量：{{data.data.sites[activeIndex].transformers}}
       </span>
       <span class="p-griditem">
-        总容量：{{data.data.sites[0].totalVolume}}kVA
+        总容量：{{data.data.sites[activeIndex].totalVolume}}kVA
       </span>
     </span>
     </p>
-    <p>备注：{{data.data.sites[0].memo}}</p>
+    <p>备注：{{data.data.sites[activeIndex].memo}}</p>
   </div>
 </template>
 
@@ -48,12 +48,17 @@ export default {
   data(){
     // console.log(this.data)
     return {
-      data: this.data
+      data: this.data,
+      activeIndex: 0,
     }
   },
   created() {
-    console.log(1)
     var userInfo = _.getlocalStorage('userInfo');
+    var SiteSwitch = _.getlocalStorage('SiteSwitch');
+    SiteSwitch?this.activeIndex = SiteSwitch:this.activeIndex = 0;
+
+
+
       var params = {
             cmd: 'getSiteInfo',
             token: userInfo.data.token,
@@ -61,7 +66,27 @@ export default {
       axios.post(Config.URL.Test, qs.stringify(params))
         .then((res) => {
           console.log(res);
+          if(res.data.errCode == 3){
+            localStorage.removeItem('userInfo');
+          }
           this.data = res;
+          _.setlocalStorage('getSiteInfo', res);
+
+          //获取getTFList
+          var tfids = res.data.sites[this.activeIndex].siteId;
+          var tfParams = {
+                cmd: 'getTFList',
+                token: userInfo.data.token,
+                siteId: tfids,
+          }
+          axios.post(Config.URL.Test, qs.stringify(tfParams))
+            .then((restf)=> {
+              if(restf.data.errMsg == 'OK'){
+                _.setlocalStorage('getTfids', restf);
+              }
+            })
+            // end
+
         })
         .catch((error) => {
           console.log(error);

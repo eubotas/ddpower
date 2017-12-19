@@ -5,7 +5,7 @@
     </div>
     <group>
       <x-input title="账号" v-model="user"></x-input>
-      <x-input title="密码" v-model="password"></x-input>
+      <x-input title="密码" type="password" v-model="password"></x-input>
     </group>
     <div class="agreepwd">
       <label for="weuiAgree" class="weui-agree">
@@ -30,6 +30,7 @@
 
 import { XHeader, XButton, XInput, Group, Toast, ToastPlugin} from 'vux'
 import Vue from 'vue';
+import vueRouter from 'vue-router';
 import axios from 'axios'
 import Config from '@/config.js'
 import qs from 'qs';
@@ -37,6 +38,7 @@ import qs from 'qs';
 import * as _ from '@/util/common'
 
 Vue.use(ToastPlugin)
+Vue.use(vueRouter)
 Vue.prototype.$http = axios
 
 export default {
@@ -78,8 +80,8 @@ export default {
               this.$vux.toast.text('登录成功！', 'middle');
               //保存用户信息
               _.setlocalStorage('userInfo', response)
-              setTimeout(function(){
-                window.location.href = '/#/'
+              setTimeout(()=>{
+                this.$router.push('/')
               }, 400)
             }else{
               this.$vux.toast.text(response.data.errMsg);
@@ -111,6 +113,7 @@ export default {
     margin-top: 15px;
   }
   .copyright{
+    text-align: center;
     margin-top: 5rem;
   }
 </style>

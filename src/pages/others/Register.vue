@@ -28,12 +28,13 @@
 <script>
 import { XHeader, XButton, XInput, Group, Toast, ToastPlugin} from 'vux'
 import Vue from 'vue';
+import vueRouter from 'vue-router';
 import axios from 'axios'
 import Config from '@/config.js'
 import qs from 'qs';
 
 import * as _ from '@/util/common'
-
+Vue.use(vueRouter)
 Vue.use(ToastPlugin)
 Vue.prototype.$http = axios
 export default {
@@ -81,8 +82,8 @@ export default {
               console.log(response)
               // 保存用户信息
               _.setlocalStorage('userInfoToken', response)
-              setTimeout(function(){
-                window.location.href = '/#/'
+              setTimeout(()=>{
+                this.$router.push('/')
               }, 400)
             }else{
               this.$vux.toast.text(response.data.errMsg);

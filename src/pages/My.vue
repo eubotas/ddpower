@@ -19,6 +19,12 @@
       <a class="callus" href="tel:4008001234"><cell title="客服电话" is-link>
         <img slot="icon" width="20" style="display:block;margin-right:8px;" src="../assets/img/icon/3.png"/>
       </cell></a>
+      <div  v-show="showSiteNum">
+        <cell title="站点切换" link="/siteswitch">
+          <img slot="icon" width="20" style="display:block;margin-right:8px;" src="../assets/img/icon/3.png"/>
+        </cell>
+      </div>
+
       <cell title="点我注销" @click.native="showPlugin">
         <img slot="icon" width="20" style="display:block;margin-right:8px;" src="../assets/img/icon/4.png"/>
       </cell>
@@ -34,6 +40,8 @@ import { Group, Cell,Confirm, TransferDomDirective as TransferDom, ConfirmPlugin
 Vue.use(ConfirmPlugin)
 import * as _ from '@/util/common'
 import VModal from 'vue-js-modal'
+import vueRouter from 'vue-router';
+Vue.use(vueRouter)
 Vue.use(VModal)
 export default {
   directives: {
@@ -50,10 +58,16 @@ export default {
   data(){
     return {
     show: false,
-    data: _.getlocalStorage('userInfo')
+    data: _.getlocalStorage('userInfo'),
+    showSiteNum: false
     }
   },
-
+  mounted() {
+    var getSiteInfo = _.getlocalStorage('getSiteInfo');
+    if(getSiteInfo.data.sites.length > 1){
+      this.showSiteNum = true;
+    }
+  },
 
   methods: {
     // 是否要注销
@@ -68,19 +82,21 @@ export default {
       console.log('确定')
     },
     showPlugin () {
-  this.$vux.confirm.show({
-    title: '提示',
-    content: '确定注销吗？',
-    onCancel () {
-      console.log('plugin cancel')
-    },
-    onConfirm () {
-      console.log('plugin confirm');
-      setTimeout(function(){
-        window.location.href = '/#/login'
-      }, 400)
-    }
-  })
+    var that = this;
+    this.$vux.confirm.show({
+      title: '提示',
+      content: '确定注销吗？',
+      onCancel () {
+        console.log('plugin cancel')
+      },
+      onConfirm () {
+        console.log('plugin confirm');
+        setTimeout(()=>{
+          that.$router.push('/login');
+          localStorage.removeItem('SiteSwitch');
+        }, 400)
+      }
+    })
 },
   }
 }

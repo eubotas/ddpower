@@ -14,7 +14,7 @@
       <img slot="icon" src="../assets/img/navbar/tab_3_uncheck.png">
       <span slot="label">数据曲线</span>
     </tabbar-item>
-    <tabbar-item>
+    <tabbar-item link="/police">
       <img slot="icon" src="../assets/img/navbar/tab_4_uncheck.png">
       <span slot="label">报警</span>
     </tabbar-item>
@@ -54,6 +54,6 @@ components: {
     position: fixed;
     left: 0;
     width: 100%;
-    bottom: 0;
+    bottom: -1px;
   }
 </style>
