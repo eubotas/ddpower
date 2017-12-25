@@ -16,6 +16,9 @@
           </div>
         </div>
 
+        <div class="charts">
+            <x-chart :id="id" :option="option"></x-chart>
+        </div>
       </div>
 
       <div class="select">
@@ -43,8 +46,14 @@ import qs from 'qs';
 
 import * as _ from '@/util/common'
 
-var myDate = new Date();
 
+import VueHighcharts from 'vue-highcharts';
+
+Vue.use(VueHighcharts)
+
+import XChart from './charts/comp.vue'
+
+var myDate = new Date()
 export default {
   name: 'charts',
   data(){
@@ -62,6 +71,13 @@ export default {
       showDate: this.showDate,
       SiteActive: 0,
       tfids: null,
+      id: 'test',
+      option: null,
+      xValue: ['0:00','0:20','0:40','1:00','1:20','1:40','2:00','2:20','2:40','3:00','3:20','3:40','4:00','4:20','4:40','5:00','5:20','5:40',
+              '6:00','6:20','6:40','7:00','7:20','7:40','8:00','8:20','8:40','9:00','9:20','9:40','10:00','10:20','10:40','11:00','11:20','11:40',
+              '12:00','12:20','12:40','13:00','13:20','13:40','14:00','14:20','14:40','15:00','15:20','15:40','16:00','16:20','16:40','17:00','17:20','17:40',
+              '18:00','18:20','18:40','19:00','19:20','19:40','20:00','20:20','20:40','21:00','21:20','21:40','22:00','22:20','22:40','23:00','23:20','23:40'],
+
     }
   },
   components: {
@@ -74,9 +90,11 @@ export default {
     Group,
     Calendar,
     PopupRadio,
+    XChart
   },
   created() {
     this.fetchData('P');
+
   },
   methods: {
     onItemClick (index) {
@@ -148,17 +166,21 @@ export default {
             if(res.data.errMsg == 'OK'){
               this.data = res;
               var that = this;
-              setTimeout(function(){
+
                 if(type == 'P'){
                   that.fillData('P', res.data);
+                  that.getHightChartData('P', res.data);
                 }else if(type == 'I'){
                   that.fillData('I', res.data);
+                  that.getHightChartData('I', res.data);
                 }else if(type == 'U'){
                   that.fillData('U', res.data);
+                  that.getHightChartData('U', res.data);
                 }else{
                   that.fillData('PE'+ res.data);
+                  that.getHightChartData('PE', res.data);
                 }
-              }, 500)
+
             }else{
               this.$vux.toast.text(res.data.errMsg);
             }
@@ -168,7 +190,6 @@ export default {
           });
     },
     fillData (type, data) {
-      var nowDate = new Date();
       var date1 = ['00:00','','','','','','','','','',
                   '03:40','','','','','','','','','',
                   '07:20','','','','','','','','','',
@@ -295,6 +316,84 @@ export default {
         }
 
       }
+    },
+
+    getHightChartData (type, data){
+      // Xchart.series[0].setData(this.option, true);
+      // Xchart.redraw();
+      var servers1 = [], servers2 = [], servers3 = [];
+      console.log('24');
+      console.log(data)
+      if(type == 'P'){
+        servers1 = { //两条数据
+            name: '今天负荷',
+            lineWidth: 1,
+            color: '#9ee460',
+            data: data.dataLast,
+        }
+        servers2 = {
+            lineWidth: 1,
+            name: '昨天负荷',
+            color: '#e35d89',
+            data: data.dataThis
+        }
+
+      }else if(type == 'I'){
+        console.log('I')
+        servers1 = { //两条数据
+            name: 'IB',
+            lineWidth: 1,
+            color: '#F3EB2B',
+            data: data.IB,
+        }
+        servers2 = {
+            lineWidth: 1,
+            name: 'IA',
+            color: '#9CE35F',
+            data: data.IA
+        }
+        servers3 = {
+            lineWidth: 1,
+            name: 'IC',
+            color: '#E95986',
+            data: data.IC
+        }
+      }else if(type == 'E'){
+
+      }else{
+
+      }
+
+      this.option = {
+          chart: {
+              type: 'line'
+          },
+          title: {
+              text: '' //表头文字
+          },
+          subtitle: {
+              text: '' //表头下文字
+          },
+          xAxis: { //x轴显示的内容
+            tickInterval: 6,
+            categories: this.xValue,
+
+          },
+          yAxis: { //y轴显示的内容
+              title: {
+                  text: ''
+              }
+          },
+
+          tooltip: {
+            valueDecimals: '2',
+            valueSuffix: 'kw',
+            shared: true,
+            crosshairs: true,
+         },
+         series: [servers1, servers2, servers3]
+      }
+
     }
   },
   mounted () {

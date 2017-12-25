@@ -21,7 +21,7 @@
       </cell></a>
       <div  v-show="showSiteNum">
         <cell title="站点切换" link="/siteswitch">
-          <img slot="icon" width="20" style="display:block;margin-right:8px;" src="../assets/img/icon/3.png"/>
+          <img slot="icon" width="20" style="display:block;margin-right:8px;" src="../assets/img/icon/siteswitch.png"/>
         </cell>
       </div>
 

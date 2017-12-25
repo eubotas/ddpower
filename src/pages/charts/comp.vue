@@ -18,9 +18,9 @@
         mounted() {
           var that = this;
           setTimeout(function(){
-            HighCharts.chart(that.id, that.option)
+            var chart = new HighCharts.chart(that.id, that.option);
           }, 500)
-
         }
+
     }
 </script>

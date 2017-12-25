@@ -1,13 +1,26 @@
-import { Line, mixins } from 'vue-chartjs'
-const { reactiveProp } = mixins
+<template>
+    <div class="x-bar">
+        <div :id="id" :option="option"></div>
+    </div>
+</template>
+<script>
+    import HighCharts from 'highcharts'
+    export default {
+        // 验证类型
+        props: {
+            id: {
+                type: String
+            },
+            option: {
+                type: Object
+            }
+        },
+        mounted() {
+          var that = this;
+          setTimeout(function(){
+            HighCharts.chart(that.id, that.option)
+          }, 500)
 
-export default {
-  extends: Line,
-  mixins: [reactiveProp],
-  props: ['options'],
-  mounted () {
-    // this.chartData is created in the mixin.
-    // If you want to pass options please create a local options object
-    this.renderChart(this.chartData, this.options)
-  }
-}
+        }
+    }
+</script>

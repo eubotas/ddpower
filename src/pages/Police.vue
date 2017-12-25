@@ -8,14 +8,14 @@
       <ul>
         <li v-for="i in data.data.alarms">
           <div class="pic">
-            <img src="../assets/img/navbar/tab_3_check.png" alt="">
+            <img src="../assets/img/icon/switch_gate.png" alt="">
           </div>
           <div class="info">
             <div class="title">
-              北京怀柔区嘉禾望岗南站4233锅炉直流
+              {{i.alarmName}}
             </div>
             <div class="date">
-              2017年12月03日 15时39分47秒
+              {{i.time}}
             </div>
           </div>
         </li>

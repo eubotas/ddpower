@@ -11,6 +11,8 @@ import * as _ from '@/util/common'
 import Vue from 'vue';
 import vueRouter from 'vue-router';
 Vue.use(vueRouter)
+
+
 export default {
   name: 'app',
   components: {
@@ -30,7 +32,27 @@ export default {
       }
       return this.$route.path.split('/').length > 2 ? false : true
     },
-  }
+ },
+
+ created() {
+   //判断本地是否保存有微信用户信息
+   if(_.isWinxin()){
+     var wxUserInfo = _.getlocalStorage('wxUserInfo');
+     if(!wxUserInfo){
+       var code = _.getUrlParams('code');
+       if(code){
+         
+       }else{
+         //没有微信用户信息，没有授权-->> 需要授权，跳转授权页面
+         window.location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid='+ wechatShare.options.wxappid +'&redirect_uri='+ window.location.href +'&response_type=code&scope=snsapi_userinfo#wechat_redirect';
+       }
+     }
+   }
+
+
+
+ },
+
 }
 </script>
 

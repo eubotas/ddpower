@@ -30,3 +30,22 @@ export function sortBy(filed, rev, primer){
           return 1;
       }
 }
+
+//判断是否是微信端
+export function isWinxin(){
+  const ua = window.navigator.userAgent.toLowerCase();
+  if(ua.match(/MicroMessenger/i) == 'micromessenger'){
+    console.log('true')
+      return true;
+  } else {
+    console.log('false')
+      return false;
+  }
+}
+//获取url后面的参数
+export function getUrlParams(name){
+    var _reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i"),
+        _regNext = window.location.search.substr(1).match(_reg);
+    if (_regNext != null) return decodeURI(_regNext[2]) || '';
+    else return '';
+}
