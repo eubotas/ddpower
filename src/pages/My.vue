@@ -6,7 +6,7 @@
         <img class="max" src="../assets/img/my/avator.png">
       </div>
       <div class="user-name">
-        {{data.data.name}}
+        {{data.userName}}
       </div>
     </div>
     <group label-width="5.5em" label-margin-right="2em" label-align="justify">
@@ -58,12 +58,15 @@ export default {
   data(){
     return {
     show: false,
-    data: _.getlocalStorage('userInfo'),
+    data: this.data,
     showSiteNum: false
     }
   },
   mounted() {
     var getSiteInfo = _.getlocalStorage('getSiteInfo');
+    this.data = _.getlocalStorage('userInfo');
+    this.data.userName = _.getlocalStorage('userName');
+    console.log(this.data)
     if(getSiteInfo.data.sites.length > 1){
       this.showSiteNum = true;
     }

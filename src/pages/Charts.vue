@@ -9,15 +9,8 @@
         <button-tab-item @on-item-click="onItemClick">功率因数</button-tab-item>
       </button-tab>
       <div class="tab-main">
-        <div>
-          <line-chart :chart-data="datacollection"></line-chart>
-          <div class="showDate">
-            {{showDate}}
-          </div>
-        </div>
-
         <div class="charts">
-            <x-chart :id="id" :option="option"></x-chart>
+            <div :id="id" :option="option"></div>
         </div>
       </div>
 
@@ -45,11 +38,13 @@ import Config from '@/config.js'
 import qs from 'qs';
 
 import * as _ from '@/util/common'
-
+import HighCharts from 'highcharts'
 
 import VueHighcharts from 'vue-highcharts';
 
 Vue.use(VueHighcharts)
+import HighchartsNoData from 'highcharts-no-data-to-display';
+HighchartsNoData(HighCharts)
 
 import XChart from './charts/comp.vue'
 
@@ -95,6 +90,13 @@ export default {
   created() {
     this.fetchData('P');
 
+    var that = this;
+    setTimeout(function(){
+      var chart = new HighCharts.chart(that.id, that.option);
+      // chart.addSeries(that.option, true);
+      // chart.update();
+      // chart.redraw(true);
+    }, 500)
   },
   methods: {
     onItemClick (index) {
@@ -168,16 +170,12 @@ export default {
               var that = this;
 
                 if(type == 'P'){
-                  that.fillData('P', res.data);
                   that.getHightChartData('P', res.data);
                 }else if(type == 'I'){
-                  that.fillData('I', res.data);
                   that.getHightChartData('I', res.data);
                 }else if(type == 'U'){
-                  that.fillData('U', res.data);
                   that.getHightChartData('U', res.data);
                 }else{
-                  that.fillData('PE'+ res.data);
                   that.getHightChartData('PE', res.data);
                 }
 
@@ -189,184 +187,90 @@ export default {
             console.log(error);
           });
     },
-    fillData (type, data) {
-      var date1 = ['00:00','','','','','','','','','',
-                  '03:40','','','','','','','','','',
-                  '07:20','','','','','','','','','',
-                  '11:00','','','','','','','','','',
-                  '14:40','','','','','','','','','',
-                  '18:20','','','','','','','','','',
-                  '22:00','','','','','','','','']
-      if(type == 'P'){
-        this.datacollection = {
-          labels: date1,
-          datasets: [
-            {
-              label: '今天负荷',
-              borderColor: '#DE5E8A',
-              fillColor : "rgba(255,255,255,0.01)",
-              borderWidth: 1,
-              pointRadius: 0,
-              data: data.dataLast
-            }, {
-              label: '昨天负荷',
-              borderColor: '#98E55F',
-              fillColor : "rgba(255,255,255,0.01)",
-              borderWidth: 1,
-              pointRadius: 0,
-              data: data.dataThis
-            }
-          ]
-        }
-      }else if(type == 'I'){
-        var date2 = ['00:00','','','','','','','','','',
-                    '03:40','','','','','','','','','',
-                    '07:20','','','','','','','','','',
-                    '11:00','','','','','','','','','',
-                    '14:40','','','','','','','','','',
-                    '18:20','','','','','','','','','',
-                    '22:00','','','','','','','','']
-        this.datacollection = {
-          labels: date2,
-          datasets: [
-            {
-              label: 'IA',
-              borderColor: '#F3EB2B',
-              fillColor : "rgba(255,255,255,0.01)",
-              borderWidth: 1,
-              pointRadius: 0,
-              data: data.IA
-            }, {
-              label: 'IB',
-              borderColor: '#9CE35F',
-              fillColor : "rgba(255,255,255,0.01)",
-              borderWidth: 1,
-              pointRadius: 0,
-              data: data.IB
-            }, {
-              label: 'IC',
-              borderColor: '#E95986',
-              fillColor : "rgba(255,255,255,0.01)",
-              borderWidth: 1,
-              pointRadius: 0,
-              data: data.IC
-            }
-          ]
-        }
-      }else if(type == 'U'){
-        var date3 = ['00:00','','','','','','','','','',
-                    '03:40','','','','','','','','','',
-                    '07:20','','','','','','','','','',
-                    '11:00','','','','','','','','','',
-                    '14:40','','','','','','','','','',
-                    '18:20','','','','','','','','','',
-                    '22:00','','','','','','','','']
-        this.datacollection = {
-          labels: date3,
-          datasets: [
-            {
-              label: 'UAC',
-              borderColor: '#ff0000',
-              fillColor : "rgba(255,255,255,0.01)",
-              borderWidth: 1,
-              pointRadius: 0,
-              data: data.UAB
-            }, {
-              label: 'UAB',
-              borderColor: '#0572c4',
-              fillColor : "rgba(255,255,255,0.01)",
-              borderWidth: 1,
-              pointRadius: 0,
-              data: data.UAC
-            }, {
-              label: 'UBC',
-              borderColor: '#0572c4',
-              fillColor : "rgba(255,255,255,0.01)",
-              borderWidth: 1,
-              pointRadius: 0,
-              data: data.UBC
-            }
-          ]
-        }
-      }else{
-        var date4 = ['00:00','','','','','','','','','',
-                    '03:40','','','','','','','','','',
-                    '07:20','','','','','','','','','',
-                    '11:00','','','','','','','','','',
-                    '14:40','','','','','','','','','',
-                    '18:20','','','','','','','','','',
-                    '22:00','','','','','','','','']
-        if(data && data.length > 0){
-          this.datacollection = {
-            labels:date4,
-            datasets: [
-              {
-                label: 'PE',
-                borderColor: '#ff0000',
-                fillColor : "rgba(255,255,255,0.01)",
-                borderWidth: 1,
-                pointRadius: 0,
-                data: data.PE
-              }
-            ]
-          }
-        }else{
-          console.log('暂无数据');
-
-        }
-
-      }
-    },
 
     getHightChartData (type, data){
-      // Xchart.series[0].setData(this.option, true);
-      // Xchart.redraw();
-      var servers1 = [], servers2 = [], servers3 = [];
-      console.log('24');
-      console.log(data)
+      var that = this;
+      var chart;
+      setTimeout(function(){
+        chart = new HighCharts.chart(that.id, that.option);
+        chart.redraw(true);
+      }, 500)
+      var servers1 = [];
+
+
       if(type == 'P'){
-        servers1 = { //两条数据
+        servers1.push({ //两条数据
             name: '今天负荷',
-            lineWidth: 1,
+            lineWidth: 2,
             color: '#9ee460',
             data: data.dataLast,
-        }
-        servers2 = {
-            lineWidth: 1,
+        })
+        servers1.push({
+            lineWidth: 2,
             name: '昨天负荷',
             color: '#e35d89',
             data: data.dataThis
-        }
+        })
 
       }else if(type == 'I'){
         console.log('I')
-        servers1 = { //两条数据
+        servers1.push({ //两条数据
             name: 'IB',
-            lineWidth: 1,
+            plotBorderWidth: 0,
+            lineWidth: 2,
             color: '#F3EB2B',
             data: data.IB,
-        }
-        servers2 = {
-            lineWidth: 1,
+        })
+        servers1.push({
+            lineWidth: 2,
             name: 'IA',
             color: '#9CE35F',
             data: data.IA
-        }
-        servers3 = {
-            lineWidth: 1,
+        })
+        servers1.push({
+            lineWidth: 2,
             name: 'IC',
             color: '#E95986',
             data: data.IC
-        }
-      }else if(type == 'E'){
-
+        })
+      }else if(type == 'U'){
+        servers1.push({
+            name: 'UAC',
+            color: '#f4ea2a',
+            lineWidth: 2,
+            data: data.UAB
+          })
+          servers1.push({
+            name: 'UAB',
+            color: '#9ee460',
+            lineWidth: 2,
+            data: data.UAC
+          })
+          servers1.push({
+            name: 'UBC',
+            color: '#e35d89',
+            lineWidth: 2,
+            data: data.UBC
+          })
       }else{
+        if(data.PE){
+          servers1.push({
+            name: 'PE',
+            color: '#f4ea2a',
+            lineWidth: 2,
+            data: data.PE
+          })
+        }else{
+          console.log('没有数据');
+          // chart.setLang.noData("Nichts zu anzeigen")
+
+        }
 
       }
 
       this.option = {
           chart: {
-              type: 'line'
+              type: 'spline'
           },
           title: {
               text: '' //表头文字
@@ -377,21 +281,34 @@ export default {
           xAxis: { //x轴显示的内容
             tickInterval: 6,
             categories: this.xValue,
-
           },
           yAxis: { //y轴显示的内容
               title: {
                   text: ''
               }
           },
-
           tooltip: {
             valueDecimals: '2',
             valueSuffix: 'kw',
             shared: true,
             crosshairs: true,
          },
-         series: [servers1, servers2, servers3]
+         plotOptions: {
+            series: {
+                marker: {
+                    radius: 0,
+                    symbol: 'circle',
+                }
+            }
+        },
+        lang: {
+            noData: "暂无数据" //真正显示的文本
+        },
+        credits: {
+          	text: '',
+          	href: ''
+      	},
+         series: servers1
       }
 
     }

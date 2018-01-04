@@ -58,7 +58,8 @@ export default {
     }
   },
   mounted:function(){
-
+    var getSiteInfo = _.getlocalStorage('getSiteInfo');
+    console.log(getSiteInfo)
   },
   methods: {
     // 提交
@@ -79,10 +80,34 @@ export default {
             if(response.data.errMsg == 'OK'){
               this.$vux.toast.text('登录成功！', 'middle');
               //保存用户信息
-              _.setlocalStorage('userInfo', response)
-              setTimeout(()=>{
-                this.$router.push('/')
-              }, 400)
+              _.setlocalStorage('userInfo', response);
+              _.setlocalStorage('userName', this.user);
+              var wxOpenId = _.getlocalStorage('wxOpenId');
+
+              console.log(response)
+              if(!_.isWinxin()){
+                setTimeout(()=>{
+                  this.$router.push('/')
+                }, 400)
+              }else{
+                // 绑定openid和用户名称
+                var params2 = {
+                  username: this.user,
+                  password: this.password,
+                  openId: wxOpenId
+                }
+                axios.post('/main/system/webdev/DDPOWER/user/bind', qs.stringify(params2))
+                  .then((res) => {
+                    console.log(res);
+
+                    setTimeout(()=>{
+                      this.$router.push('/')
+                    }, 400)
+                  })
+              }
+
+
+
             }else{
               this.$vux.toast.text(response.data.errMsg);
             }

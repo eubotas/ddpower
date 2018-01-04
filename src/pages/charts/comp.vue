@@ -19,6 +19,8 @@
           var that = this;
           setTimeout(function(){
             var chart = new HighCharts.chart(that.id, that.option);
+            chart.addSeries(that.option);
+            chart.redraw();
           }, 500)
         }
 
